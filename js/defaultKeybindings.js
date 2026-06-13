@@ -105,8 +105,12 @@ const defaultKeybindings = {
     })
 
     keybindings.defineShortcut('addToFavorites', function (e) {
-      tabEditor.show(tabs.getSelected(), null, false) // we need to show the bookmarks button, which is only visible in edit mode
-      tabEditor.container.querySelector('.bookmarks-button').click()
+      if (document.body.classList.contains('chrome-layout')) {
+        tabEditor.star.click()
+      } else {
+        tabEditor.show(tabs.getSelected(), null, false) // we need to show the bookmarks button, which is only visible in edit mode
+        tabEditor.container.querySelector('.bookmarks-button').click()
+      }
     })
 
     keybindings.defineShortcut('showBookmarks', function () {

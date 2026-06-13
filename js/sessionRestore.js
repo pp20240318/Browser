@@ -129,7 +129,11 @@ const sessionRestore = {
       if (tasks.getSelected().tabs.isEmpty() || startupConfigOption === 1) {
         browserUI.switchToTask(mostRecentTasks[0].id)
         if (tasks.getSelected().tabs.isEmpty()) {
-          tabEditor.show(tasks.getSelected().tabs.getSelected())
+          if (document.body.classList.contains('chrome-layout')) {
+            tabEditor.updateDisplay(tasks.getSelected().tabs.getSelected())
+          } else {
+            tabEditor.show(tasks.getSelected().tabs.getSelected())
+          }
         }
       } else {
         window.createdNewTaskOnStartup = true
@@ -137,7 +141,11 @@ const sessionRestore = {
         var lastTask = tasks.byIndex(tasks.getLength() - 1)
         if (lastTask && lastTask.tabs.isEmpty() && !lastTask.name) {
           browserUI.switchToTask(lastTask.id)
-          tabEditor.show(lastTask.tabs.getSelected())
+          if (document.body.classList.contains('chrome-layout')) {
+            tabEditor.updateDisplay(lastTask.tabs.getSelected())
+          } else {
+            tabEditor.show(lastTask.tabs.getSelected())
+          }
         } else {
           browserUI.addTask()
         }
@@ -213,7 +221,11 @@ const sessionRestore = {
       })
     if (newTaskCandidates.length > 0) {
       browserUI.switchToTask(newTaskCandidates[0].id)
-      tabEditor.show(tasks.getSelected().tabs.getSelected())
+      if (document.body.classList.contains('chrome-layout')) {
+        tabEditor.updateDisplay(tasks.getSelected().tabs.getSelected())
+      } else {
+        tabEditor.show(tasks.getSelected().tabs.getSelected())
+      }
     } else {
       browserUI.addTask()
     }

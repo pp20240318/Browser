@@ -48,6 +48,25 @@ ipc.on('unmaximize', function () {
 })
 
 document.body.classList.add('focused')
+document.body.classList.add('chrome-layout')
+
+window.getChromeUIHeight = function () {
+  var height = 0
+  var navbar = document.getElementById('navbar')
+  var toolbar = document.getElementById('toolbar')
+  var bookmarkBar = document.getElementById('bookmark-bar')
+  if (navbar && !navbar.hidden) {
+    height += navbar.offsetHeight
+  }
+  if (toolbar && !toolbar.hidden) {
+    height += toolbar.offsetHeight
+  }
+  if (bookmarkBar && !bookmarkBar.hidden) {
+    height += bookmarkBar.offsetHeight
+  }
+  document.documentElement.style.setProperty('--chrome-ui-height', height + 'px')
+  return height
+}
 
 ipc.on('focus', function () {
   document.body.classList.add('focused')
@@ -103,9 +122,20 @@ window.empty = function (node) {
   }
 }
 
+window.addEventListener('resize', throttle(function () {
+  if (document.body.classList.contains('chrome-layout')) {
+    window.getChromeUIHeight()
+    require('webviews.js').resize()
+  }
+}, 75))
+
 /* prevent a click event from firing after dragging the window */
 
 window.addEventListener('load', function () {
+  if (document.body.classList.contains('chrome-layout') && window.getChromeUIHeight) {
+    window.getChromeUIHeight()
+  }
+
   var isMouseDown = false
   var isDragging = false
   var distance = 0
@@ -149,6 +179,7 @@ require('navbar/tabContextMenu.js').initialize()
 require('navbar/tabActivity.js').initialize()
 require('navbar/tabColor.js').initialize()
 require('navbar/navigationButtons.js').initialize()
+require('navbar/bookmarkBar.js').initialize()
 require('downloadManager.js').initialize()
 require('webviewMenu.js').initialize()
 require('contextMenu.js').initialize()

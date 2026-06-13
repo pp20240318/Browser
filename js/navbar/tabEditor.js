@@ -6,11 +6,33 @@ var keyboardNavigationHelper = require('util/keyboardNavigationHelper.js')
 var bookmarkStar = require('navbar/bookmarkStar.js')
 var contentBlockingToggle = require('navbar/contentBlockingToggle.js')
 
+function isChromeLayout () {
+  return document.body.classList.contains('chrome-layout')
+}
+
 const tabEditor = {
   container: document.getElementById('tab-editor'),
   input: document.getElementById('tab-editor-input'),
   star: null,
   isShown: false,
+  updateDisplay: function (tabId) {
+    if (!tabId) {
+      tabId = tabs.getSelected()
+    }
+    if (!tabId) {
+      return
+    }
+
+    tabEditor.container.hidden = false
+    bookmarkStar.update(tabId, tabEditor.star)
+    contentBlockingToggle.update(tabId, tabEditor.contentBlockingToggle)
+
+    var currentURL = urlParser.getSourceURL(tabs.get(tabId).url)
+    if (currentURL === 'min://newtab') {
+      currentURL = ''
+    }
+    tabEditor.input.value = currentURL
+  },
   show: function (tabId, editingValue, showSearchbar) {
     /* Edit mode is not available in modal mode. */
     if (modalMode.enabled()) {
@@ -23,20 +45,28 @@ const tabEditor = {
     bookmarkStar.update(tabId, tabEditor.star)
     contentBlockingToggle.update(tabId, tabEditor.contentBlockingToggle)
 
-    webviews.requestPlaceholder('editMode')
-
-    document.body.classList.add('is-edit-mode')
-
     var currentURL = urlParser.getSourceURL(tabs.get(tabId).url)
     if (currentURL === 'min://newtab') {
       currentURL = ''
     }
 
     tabEditor.input.value = editingValue || currentURL
-    tabEditor.input.focus()
+
+    if (isChromeLayout() && showSearchbar === false && !editingValue) {
+      return
+    }
+
+    if (!isChromeLayout()) {
+      webviews.requestPlaceholder('editMode')
+      document.body.classList.add('is-edit-mode')
+    } else {
+      document.body.classList.add('is-address-focused')
+    }
+
     if (!editingValue) {
       tabEditor.input.select()
     }
+    tabEditor.input.focus()
     // https://github.com/minbrowser/min/discussions/1506
     tabEditor.input.scrollLeft = 0
 
@@ -50,8 +80,8 @@ const tabEditor = {
       }
     }
 
-    /* animation */
-    if (tabs.count() > 1) {
+  /* animation - skip in chrome layout */
+    if (!isChromeLayout() && tabs.count() > 1) {
       requestAnimationFrame(function () {
         var item = document.querySelector(`.tab-item[data-tab="${tabId}"]`)
         var originCoordinates = item.getBoundingClientRect()
@@ -71,16 +101,20 @@ const tabEditor = {
     }
   },
   hide: function () {
-    tabEditor.container.hidden = true
-    tabEditor.container.removeAttribute('style')
     tabEditor.isShown = false
 
     tabEditor.input.blur()
     searchbar.hide()
 
-    document.body.classList.remove('is-edit-mode')
-
-    webviews.hidePlaceholder('editMode')
+    if (isChromeLayout()) {
+      document.body.classList.remove('is-address-focused')
+      tabEditor.updateDisplay(tabs.getSelected())
+    } else {
+      tabEditor.container.hidden = true
+      tabEditor.container.removeAttribute('style')
+      document.body.classList.remove('is-edit-mode')
+      webviews.hidePlaceholder('editMode')
+    }
   },
   initialize: function () {
     tabEditor.input.setAttribute('placeholder', l('searchbarPlaceholder'))
@@ -121,7 +155,9 @@ const tabEditor = {
     })
 
     document.getElementById('webviews').addEventListener('click', function () {
-      tabEditor.hide()
+      if (tabEditor.isShown) {
+        tabEditor.hide()
+      }
     })
   }
 }

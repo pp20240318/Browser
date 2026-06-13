@@ -1,0 +1,251 @@
+/* Chrome-like fixed tab bar, address bar, and bookmark bar */
+
+body.chrome-layout #navbar,
+body.chrome-layout #toolbar,
+body.chrome-layout #bookmark-bar,
+body.chrome-layout #switch-task-button {
+  background-color: #f1f3f4 !important;
+  color: #202124 !important;
+}
+
+body.chrome-layout.dark-mode #navbar,
+body.chrome-layout.dark-mode #toolbar,
+body.chrome-layout.dark-mode #bookmark-bar,
+body.chrome-layout.dark-mode #switch-task-button {
+  background-color: #202124 !important;
+  color: #e8eaed !important;
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+body.chrome-layout #navbar:before,
+body.chrome-layout #toolbar,
+body.chrome-layout #bookmark-bar {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+body.chrome-layout #tab-editor {
+  background: #fff !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+body.chrome-layout.dark-mode #tab-editor {
+  background: #303134 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.chrome-layout.is-address-focused #tab-editor {
+  background: #fff !important;
+  border-color: rgba(26, 115, 232, 0.5) !important;
+  box-shadow: 0 1px 3px rgba(26, 115, 232, 0.2);
+}
+
+body.chrome-layout.dark-mode.is-address-focused #tab-editor {
+  background: #303134 !important;
+  border-color: rgba(138, 180, 248, 0.5) !important;
+}
+
+body.chrome-layout .tab-item.active:not(:only-child) {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.chrome-layout.dark-mode .tab-item.active:not(:only-child) {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.chrome-layout .tab-item:not(.active):hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+body.chrome-layout.dark-mode .tab-item:not(.active):hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.chrome-layout #navbar,
+body.chrome-layout #toolbar,
+body.chrome-layout #bookmark-bar {
+  position: relative;
+  z-index: 5;
+  -webkit-app-region: no-drag;
+}
+
+body.chrome-layout #navbar .navbar-action-button,
+body.chrome-layout #switch-task-button,
+body.chrome-layout #toolbar button,
+body.chrome-layout #tab-editor-input,
+body.chrome-layout .bookmark-bar-item,
+body.chrome-layout .bookmark-bar-all {
+  -webkit-app-region: no-drag;
+}
+
+body.chrome-layout #navbar #tabs {
+  flex: 1;
+}
+
+body.chrome-layout #toolbar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  padding-left: var(--control-space-left);
+  padding-right: var(--control-space-right);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 3;
+  -webkit-app-region: no-drag;
+}
+
+body.chrome-layout.dark-theme #toolbar {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+body.chrome-layout #toolbar-navigation-buttons {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: auto !important;
+  margin-right: 0.25rem;
+}
+
+body.chrome-layout #toolbar-navigation-buttons.can-go-forward:hover {
+  width: auto !important;
+}
+
+body.chrome-layout #toolbar #back-button,
+body.chrome-layout #toolbar #forward-button,
+body.chrome-layout #toolbar #reload-button {
+  width: 32px;
+  padding: 0;
+  font-size: 1.15em !important;
+  height: 32px;
+}
+
+body.chrome-layout #toolbar #forward-button {
+  margin-left: 0;
+}
+
+body.chrome-layout #tab-editor {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 0.5rem;
+  border-radius: 16px;
+}
+
+body.chrome-layout #tab-editor-input {
+  font-size: 0.9em;
+  line-height: 30px;
+  height: 30px;
+}
+
+body.chrome-layout #tab-editor .tab-editor-button {
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+/* tabs always visible */
+body.chrome-layout.is-edit-mode .tab-item,
+body.chrome-layout.is-address-focused .tab-item {
+  opacity: 1 !important;
+}
+
+body.chrome-layout.is-edit-mode #toolbar-navigation-buttons,
+body.chrome-layout.is-address-focused #toolbar-navigation-buttons {
+  display: flex !important;
+}
+
+body.chrome-layout.is-address-focused #overlay {
+  display: none;
+}
+
+body.chrome-layout #searchbar {
+  top: calc(var(--control-space-top) + 36px + 40px);
+  padding-left: calc(36px + var(--control-space-left));
+  padding-right: calc(82px + var(--control-space-right));
+  max-height: calc(100% - 180px);
+}
+
+body.windows.chrome-layout #searchbar,
+body.linux.chrome-layout #searchbar {
+  padding-left: calc(36px + var(--control-space-left));
+}
+
+/* bookmark bar */
+body.chrome-layout #bookmark-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 32px;
+  padding: 0 var(--control-space-right) 0 var(--control-space-left);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 2;
+  -webkit-app-region: no-drag;
+}
+
+body.chrome-layout.dark-theme #bookmark-bar {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+body.chrome-layout #bookmark-bar-items {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+body.chrome-layout .bookmark-bar-item {
+  display: inline-flex;
+  align-items: center;
+  max-width: 180px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+  cursor: default;
+  -webkit-user-select: none;
+}
+
+body.chrome-layout .bookmark-bar-item:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.chrome-layout.dark-theme .bookmark-bar-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+body.chrome-layout .bookmark-bar-all {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+body.chrome-layout .bookmark-bar-all:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.chrome-layout.dark-theme .bookmark-bar-all:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+body.chrome-layout #webviews {
+  height: calc(100vh - var(--chrome-ui-height, 108px) - var(--control-space-top));
+}
+
+body.chrome-layout #password-capture-bar {
+  top: calc(var(--chrome-ui-height, 108px) + var(--control-space-top));
+}

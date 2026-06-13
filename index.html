@@ -120,24 +120,7 @@
         data-label="openMenu"
         tabindex="-1"
       ></button>
-      <div id="toolbar-navigation-buttons" hidden>
-          <button
-          id="back-button"
-          class="navbar-action-button i carbon:chevron-left"
-          data-label="goBack"
-          tabindex="-1"
-        ></button>
-        <button
-        id="forward-button"
-        class="navbar-action-button i carbon:chevron-right"
-        data-label="goForward"
-        tabindex="-1"
-      ></button>
-      </div>
       <div id="tabs">
-        <div id="tab-editor" hidden>
-          <input id="tab-editor-input" spellcheck="false" />
-        </div>
         <div id="tabs-inner" role="tablist" class="has-thin-scrollbar"></div>
       </div>
       <div class="navbar-right-actions">
@@ -148,6 +131,45 @@
           tabindex="-1"
         ></button>
       </div>
+    </div>
+
+    <div
+      id="toolbar"
+      class="theme-background-color theme-text-color"
+      tabindex="-1"
+    >
+      <div id="toolbar-navigation-buttons" hidden>
+        <button
+          id="back-button"
+          class="navbar-action-button i carbon:chevron-left"
+          data-label="goBack"
+          tabindex="-1"
+        ></button>
+        <button
+          id="forward-button"
+          class="navbar-action-button i carbon:chevron-right"
+          data-label="goForward"
+          tabindex="-1"
+        ></button>
+        <button
+          id="reload-button"
+          class="navbar-action-button i carbon:renew"
+          title="Reload"
+          aria-label="Reload"
+          tabindex="-1"
+        ></button>
+      </div>
+      <div id="tab-editor">
+        <input id="tab-editor-input" spellcheck="false" />
+      </div>
+    </div>
+
+    <div
+      id="bookmark-bar"
+      class="theme-background-color theme-text-color"
+      tabindex="-1"
+    >
+      <div id="bookmark-bar-items" class="has-thin-scrollbar" role="toolbar"></div>
     </div>
 
     <button

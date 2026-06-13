@@ -50,7 +50,9 @@ function addTab (tabId = tabs.add(), options = {}) {
     switchToTab(tabId, {
       focusWebview: options.enterEditMode === false
     })
-    if (options.enterEditMode !== false) {
+    if (document.body.classList.contains('chrome-layout')) {
+      tabEditor.updateDisplay(tabId)
+    } else if (options.enterEditMode !== false) {
       tabEditor.show(tabId)
     }
   } else {
@@ -222,6 +224,10 @@ function switchToTab (id, options) {
   })
 
   tabEditor.hide()
+
+  if (document.body.classList.contains('chrome-layout')) {
+    tabEditor.updateDisplay(id)
+  }
 
   if (!tabs.get(id).url) {
     document.body.classList.add('is-ntp')

@@ -42,6 +42,13 @@ function onPageURLChange (tab, url) {
   }
 
   webviews.callAsync(tab, 'setVisualZoomLevelLimits', [1, 3])
+
+  if (tab === tabs.getSelected() && document.body.classList.contains('chrome-layout')) {
+    var tabEditor = require('navbar/tabEditor.js')
+    if (!tabEditor.isShown) {
+      tabEditor.updateDisplay(tab)
+    }
+  }
 }
 
 // called whenever a navigation finishes
@@ -158,19 +165,28 @@ const webviews = {
         height: window.innerHeight
       }
     } else {
-      if (!hasSeparateTitlebar && (window.platformType === 'linux' || window.platformType === 'windows') && !windowIsMaximized && !windowIsFullscreen) {
-        var navbarHeight = 48
+      var chromeHeight
+      if (document.body.classList.contains('chrome-layout') && window.getChromeUIHeight) {
+        chromeHeight = window.getChromeUIHeight()
+        if (!chromeHeight) {
+          chromeHeight = 108
+        }
       } else {
-        var navbarHeight = 36
+        if (!hasSeparateTitlebar && (window.platformType === 'linux' || window.platformType === 'windows') && !windowIsMaximized && !windowIsFullscreen) {
+          var navbarHeight = 48
+        } else {
+          var navbarHeight = 36
+        }
+        chromeHeight = navbarHeight
       }
 
       const viewMargins = webviews.viewMargins
 
       let position = {
         x: 0 + Math.round(viewMargins[3]),
-        y: 0 + Math.round(viewMargins[0]) + navbarHeight,
+        y: 0 + Math.round(viewMargins[0]) + chromeHeight,
         width: window.innerWidth - Math.round(viewMargins[1] + viewMargins[3]),
-        height: window.innerHeight - Math.round(viewMargins[0] + viewMargins[2]) - navbarHeight
+        height: window.innerHeight - Math.round(viewMargins[0] + viewMargins[2]) - chromeHeight
       }
 
       return position
@@ -525,7 +541,7 @@ ipc.on('captureData', function (e, data) {
 /* focus the view when the window is focused */
 
 ipc.on('windowFocus', function () {
-  if (webviews.placeholderRequests.length === 0 && document.activeElement.tagName !== 'INPUT') {
+  if (webviews.placeholderRequests.length === 0 && document.activeElement.tagName !== 'INPUT' && !document.body.classList.contains('is-address-focused')) {
     webviews.focus()
   }
 })

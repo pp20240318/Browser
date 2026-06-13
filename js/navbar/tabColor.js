@@ -153,31 +153,67 @@ function getLuminance (c) {
   return 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
 }
 
+function isChromeHeaderElement (el) {
+  return el && (el.matches('#navbar, #toolbar, #bookmark-bar, #switch-task-button') || el.closest('#navbar, #toolbar, #bookmark-bar, #switch-task-button'))
+}
+
+function setFixedChromeHeaderColors () {
+  if (!document.body.classList.contains('chrome-layout')) {
+    return
+  }
+
+  const bg = window.isDarkMode ? defaultColors.darkMode[0] : defaultColors.lightMode[0]
+  const fg = window.isDarkMode ? defaultColors.darkMode[1] : defaultColors.lightMode[1]
+
+  document.querySelectorAll('#navbar, #toolbar, #bookmark-bar, #switch-task-button').forEach(function (el) {
+    el.style.backgroundColor = bg
+    el.style.color = fg
+  })
+}
+
 function setColor (bg, fg, isLowContrast) {
   document.body.style.setProperty('--theme-background-color', bg)
   document.body.style.setProperty('--theme-foreground-color', fg)
 
   const backgroundElements = document.getElementsByClassName('theme-background-color')
   const textElements = document.getElementsByClassName('theme-text-color')
+  const chromeLayout = document.body.classList.contains('chrome-layout')
 
   for (let i = 0; i < backgroundElements.length; i++) {
+    if (chromeLayout && isChromeHeaderElement(backgroundElements[i])) {
+      continue
+    }
     backgroundElements[i].style.backgroundColor = bg
   }
 
   for (let i = 0; i < textElements.length; i++) {
+    if (chromeLayout && isChromeHeaderElement(textElements[i])) {
+      continue
+    }
     textElements[i].style.color = fg
   }
 
-  if (fg === 'white') {
+  if (chromeLayout) {
+    if (window.isDarkMode) {
+      document.body.classList.add('dark-theme')
+    } else {
+      document.body.classList.remove('dark-theme')
+    }
+    document.body.classList.remove('theme-background-low-contrast')
+  } else if (fg === 'white') {
     document.body.classList.add('dark-theme')
   } else {
     document.body.classList.remove('dark-theme')
   }
-  if (isLowContrast) {
-    document.body.classList.add('theme-background-low-contrast')
-  } else {
-    document.body.classList.remove('theme-background-low-contrast')
+  if (!chromeLayout) {
+    if (isLowContrast) {
+      document.body.classList.add('theme-background-low-contrast')
+    } else {
+      document.body.classList.remove('theme-background-low-contrast')
+    }
   }
+
+  setFixedChromeHeaderColors()
 }
 
 const tabColor = {
@@ -223,6 +259,7 @@ const tabColor = {
     // theme changes can affect the tab colors
     window.addEventListener('themechange', function (e) {
       tabColor.updateColors()
+      setFixedChromeHeaderColors()
     })
 
     settings.listen('siteTheme', function (value) {

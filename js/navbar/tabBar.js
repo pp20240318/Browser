@@ -95,12 +95,19 @@ const tabBar = {
 
     tabEl.appendChild(titleContainer)
 
-    // click to enter edit mode or switch to a tab
+    // click to switch tabs; double-click to edit URL in chrome layout
     tabEl.addEventListener('click', function (e) {
-      if (tabs.getSelected() !== data.id) { // else switch to tab if it isn't focused
+      if (tabs.getSelected() !== data.id) {
         tabBar.events.emit('tab-selected', data.id)
-      } else { // the tab is focused, edit tab instead
+      } else if (!document.body.classList.contains('chrome-layout')) {
         tabEditor.show(data.id)
+      }
+    })
+
+    tabEl.addEventListener('dblclick', function (e) {
+      if (document.body.classList.contains('chrome-layout') && tabs.getSelected() === data.id) {
+        tabEditor.show(data.id)
+        e.preventDefault()
       }
     })
 

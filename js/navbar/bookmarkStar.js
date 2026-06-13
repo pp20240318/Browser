@@ -31,6 +31,10 @@ const bookmarkStar = {
       star.classList.add('carbon:star-filled')
       star.setAttribute('aria-pressed', true)
 
+      try {
+        require('navbar/bookmarkBar.js').refresh()
+      } catch (e) {}
+
       var editorInsertionPoint = document.createElement('div')
       searchbarPlugins.getContainer('simpleBookmarkTagInput').appendChild(editorInsertionPoint)
       bookmarkEditor.show(tabs.get(tabs.getSelected()).url, editorInsertionPoint, function (newBookmark) {
@@ -39,8 +43,15 @@ const bookmarkStar = {
           star.classList.add('carbon:star')
           star.classList.remove('carbon:star-filled')
           star.setAttribute('aria-pressed', false)
+          try {
+            require('navbar/bookmarkBar.js').refresh()
+          } catch (e) {}
           searchbar.showResults('')
           searchbar.associatedInput.focus()
+        } else {
+          try {
+            require('navbar/bookmarkBar.js').refresh()
+          } catch (e) {}
         }
       }, { simplified: true, autoFocus: true })
     })

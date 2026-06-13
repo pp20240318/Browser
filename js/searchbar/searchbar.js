@@ -30,6 +30,9 @@ var searchbar = {
     searchbarPlugins.clearAll()
   },
   getValue: function () {
+    if (!searchbar.associatedInput) {
+      return ''
+    }
     var text = searchbar.associatedInput.value
     return text.replace(text.substring(searchbar.associatedInput.selectionStart, searchbar.associatedInput.selectionEnd), '')
   },

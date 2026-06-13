@@ -5,6 +5,7 @@ var navigationButtons = {
   container: document.getElementById('toolbar-navigation-buttons'),
   backButton: document.getElementById('back-button'),
   forwardButton: document.getElementById('forward-button'),
+  reloadButton: document.getElementById('reload-button'),
   update: function () {
     if (!tabs.get(tabs.getSelected()).url) {
       navigationButtons.backButton.disabled = true
@@ -39,6 +40,12 @@ var navigationButtons = {
     navigationButtons.forwardButton.addEventListener('click', function () {
       webviews.callAsync(tabs.getSelected(), 'goForward')
     })
+
+    if (navigationButtons.reloadButton) {
+      navigationButtons.reloadButton.addEventListener('click', function () {
+        webviews.callAsync(tabs.getSelected(), 'reload')
+      })
+    }
 
     navigationButtons.container.addEventListener('mouseenter', function () {
       /*
