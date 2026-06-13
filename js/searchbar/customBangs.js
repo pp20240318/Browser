@@ -370,9 +370,13 @@ function initialize () {
     fn: function (text) {
       const url = tabs.get(tabs.getSelected()).url
       if (url) {
+        const tags = text ? text.split(/\s/g).map(t => t.replace('#', '').trim()).filter(Boolean) : [require('bookmarkUtils.js').BAR_TAG]
+        if (!tags.some(t => require('bookmarkUtils.js').isBarTag(t))) {
+          tags.unshift(require('bookmarkUtils.js').BAR_TAG)
+        }
         places.updateItem(url, {
           isBookmarked: true,
-          tags: (text ? text.split(/\s/g).map(t => t.replace('#', '').trim()) : [])
+          tags: tags
         }).then(function () {
           try {
             require('navbar/bookmarkBar.js').refresh()

@@ -365,6 +365,27 @@
 </div>
     </div>
 
+    <div id="bookmark-dialog" class="modal bookmark-dialog" hidden>
+      <h3 class="modal-title" data-string="addBookmark"></h3>
+      <button
+        id="bookmark-dialog-close"
+        class="modal-close-button i carbon:close"
+      ></button>
+      <label class="bookmark-dialog-field">
+        <span data-string="bookmarkName"></span>
+        <input id="bookmark-dialog-title" type="text" spellcheck="false" />
+      </label>
+      <label class="bookmark-dialog-field">
+        <span data-string="bookmarkFolder"></span>
+        <select id="bookmark-dialog-folder"></select>
+      </label>
+      <div id="bookmark-dialog-url" class="bookmark-dialog-url"></div>
+      <div class="bookmark-dialog-buttons">
+        <button id="bookmark-dialog-remove" class="bookmark-dialog-remove" data-string="deleteBookmark"></button>
+        <button id="bookmark-dialog-save" class="bookmark-dialog-save" data-string="dialogConfirmButton"></button>
+      </div>
+    </div>
+
     <!-- add scripts in Gruntfile.js -->
 
     <script src="dist/bundle.js"></script>

@@ -3,6 +3,7 @@
 var places = require('places/places.js')
 var urlParser = require('util/urlParser.js')
 var settings = require('util/settings/settings.js')
+var bookmarkUtils = require('bookmarkUtils.js')
 var path = require('path')
 var fs = require('fs')
 
@@ -32,7 +33,7 @@ const bookmarkConverter = {
       var parent = bookmark.parentElement
       while (parent != null) {
         if (parent.children[0] && parent.children[0].tagName === 'H3') {
-          data.tags.push(parent.children[0].textContent.replace(/\s/g, '-'))
+          data.tags.push(bookmarkUtils.normalizeImportedFolderTag(parent.children[0].textContent))
           break
         }
         parent = parent.parentElement

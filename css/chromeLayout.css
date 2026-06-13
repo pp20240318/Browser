@@ -242,6 +242,92 @@ body.chrome-layout.dark-theme .bookmark-bar-all:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* bookmark bar folders and overflow */
+body.chrome-layout .bookmark-bar-folder {
+  position: relative;
+  display: inline-flex;
+}
+
+body.chrome-layout .bookmark-bar-folder-button {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+body.chrome-layout .bookmark-bar-folder-menu,
+body.chrome-layout .bookmark-bar-overflow-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  max-width: 280px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 4px 0;
+  margin-top: 2px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  z-index: 20;
+}
+
+body.chrome-layout.dark-theme .bookmark-bar-folder-menu,
+body.chrome-layout.dark-theme .bookmark-bar-overflow-menu {
+  background: #292a2d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+body.chrome-layout .bookmark-bar-folder-item {
+  display: block;
+  padding: 6px 16px;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+}
+
+body.chrome-layout .bookmark-bar-folder-item:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+body.chrome-layout.dark-theme .bookmark-bar-folder-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.chrome-layout .bookmark-bar-overflow {
+  position: relative;
+  display: inline-flex;
+}
+
+body.chrome-layout .bookmark-bar-overflow-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+body.chrome-layout .bookmark-bar-overflow-button:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.chrome-layout.dark-theme .bookmark-bar-overflow-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+body.chrome-layout .bookmark-bar-item.overflow-hidden {
+  display: none !important;
+}
+
 body.chrome-layout #webviews {
   height: calc(100vh - var(--chrome-ui-height, 108px) - var(--control-space-top));
 }

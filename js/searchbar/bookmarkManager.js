@@ -4,10 +4,11 @@ var searchbarUtils = require('searchbar/searchbarUtils.js')
 var bangsPlugin = require('searchbar/bangsPlugin.js')
 var places = require('places/places.js')
 var urlParser = require('util/urlParser.js')
-var formatRelativeDate = require('util/relativeDate.js')
+var bookmarkUtils = require('bookmarkUtils.js')
 
 var tabEditor = require('navbar/tabEditor.js')
 var bookmarkEditor = require('searchbar/bookmarkEditor.js')
+var bookmarkDialog = require('bookmarkDialog.js')
 
 const maxTagSuggestions = 12
 
@@ -37,22 +38,25 @@ function itemMatchesTags (item, tags) {
 }
 
 function showBookmarkEditor (url, item) {
-  bookmarkEditor.show(url, item, function (newBookmark) {
-    if (newBookmark) {
-      if (item.parentNode) {
-        // item could be detached from the DOM if the searchbar is closed
-        item.parentNode.replaceChild(searchbarUtils.createItem(getBookmarkListItemData(newBookmark)), item)
+  bookmarkDialog.show(url, {
+    onClose: function (newBookmark) {
+      if (newBookmark === false) {
+        return
       }
-    } else {
-      places.deleteHistory(url)
-      item.remove()
+      if (tabEditor.input && tabEditor.input.value.startsWith('!bookmarks')) {
+        searchbar.showResults(tabEditor.input.value, null)
+      } else if (!newBookmark && item && item.parentNode) {
+        item.remove()
+      }
     }
   })
 }
 
 function getBookmarkListItemData (result, focus) {
+  const folder = bookmarkUtils.getPrimaryFolder(result.tags)
   return {
-    title: result.title,
+    title: bookmarkUtils.getBookmarkTitle(result),
+    metadata: [bookmarkUtils.getFolderDisplayName(folder)],
     secondaryText: urlParser.basicURL(urlParser.getSourceURL(result.url)),
     fakeFocus: focus,
     click: function (e) {
@@ -61,6 +65,9 @@ function getBookmarkListItemData (result, focus) {
     classList: ['bookmark-item'],
     delete: function () {
       places.deleteHistory(result.url)
+      try {
+        require('navbar/bookmarkBar.js').refresh()
+      } catch (e) {}
     },
     button: {
       icon: 'carbon:edit',
@@ -69,6 +76,38 @@ function getBookmarkListItemData (result, focus) {
       }
     }
   }
+}
+
+function groupByFolder (results) {
+  const groups = {}
+  const seenUrls = new Set()
+  results.forEach(function (result) {
+    const normalizedUrl = bookmarkUtils.normalizeBookmarkUrl(result.url)
+    if (seenUrls.has(normalizedUrl)) {
+      return
+    }
+    seenUrls.add(normalizedUrl)
+    const folder = bookmarkUtils.getPrimaryFolder(result.tags)
+    if (!groups[folder]) {
+      groups[folder] = []
+    }
+    groups[folder].push(result)
+  })
+
+  const folderOrder = Object.keys(groups).sort(function (a, b) {
+    if (a === bookmarkUtils.BAR_TAG) return -1
+    if (b === bookmarkUtils.BAR_TAG) return 1
+    if (a === bookmarkUtils.OTHER_TAG) return 1
+    if (b === bookmarkUtils.OTHER_TAG) return -1
+    return bookmarkUtils.getFolderDisplayName(a).localeCompare(bookmarkUtils.getFolderDisplayName(b))
+  })
+
+  return folderOrder.map(function (folder) {
+    return {
+      folder: folder,
+      items: groups[folder].sort(bookmarkUtils.sortByTitle)
+    }
+  })
 }
 
 const bookmarkManager = {
@@ -101,7 +140,7 @@ const bookmarkManager = {
         onModify: () => bookmarkManager.showBookmarks(text, input, event)
       }))
     })
-    // it doesn't make sense to display tag suggestions if there's a search, since the suggestions are generated without taking the search into account
+
     if (!parsedText.text) {
       suggestedTags.forEach(function (suggestion, index) {
         var el = bookmarkEditor.getTagElement(suggestion, false, function () {
@@ -125,34 +164,41 @@ const bookmarkManager = {
       }
     }
 
-    var lastRelativeDate = '' // used to generate headings
+    const filtered = results.filter(function (result) {
+      return itemMatchesTags(result, parsedText.tags)
+    })
 
-    results
-      .filter(function (result) {
-        if (itemMatchesTags(result, parsedText.tags)) {
-          return true
-        } else {
-          return false
+    if (parsedText.text) {
+      const seenUrls = new Set()
+      filtered.sort(bookmarkUtils.sortByTitle)
+      filtered.forEach(function (result, index) {
+        const normalizedUrl = bookmarkUtils.normalizeBookmarkUrl(result.url)
+        if (seenUrls.has(normalizedUrl)) {
+          return
         }
-      })
-      .sort(function (a, b) {
-        // order by last visit
-        return b.lastVisit - a.lastVisit
-      })
-      .forEach(function (result, index) {
+        seenUrls.add(normalizedUrl)
         displayedURLset.push(result.url)
-
-        var thisRelativeDate = formatRelativeDate(result.lastVisit)
-        if (thisRelativeDate !== lastRelativeDate) {
-          searchbarPlugins.addHeading('bangs', { text: thisRelativeDate })
-          lastRelativeDate = thisRelativeDate
-        }
-
-        var itemData = getBookmarkListItemData(result, index === 0 && parsedText.text)
+        var itemData = getBookmarkListItemData(result, index === 0)
         var placeholder = lazyList.createPlaceholder()
         container.appendChild(placeholder)
         lazyList.lazyRenderItem(placeholder, itemData)
       })
+    } else {
+      const groups = groupByFolder(filtered)
+      groups.forEach(function (group) {
+        if (group.items.length === 0) {
+          return
+        }
+        searchbarPlugins.addHeading('bangs', { text: bookmarkUtils.getFolderDisplayName(group.folder) })
+        group.items.forEach(function (result, index) {
+          displayedURLset.push(result.url)
+          var itemData = getBookmarkListItemData(result, index === 0 && groups[0] === group)
+          var placeholder = lazyList.createPlaceholder()
+          container.appendChild(placeholder)
+          lazyList.lazyRenderItem(placeholder, itemData)
+        })
+      })
+    }
 
     if (text === '' && results.length < 3) {
       container.appendChild(searchbarUtils.createItem({
@@ -172,7 +218,7 @@ const bookmarkManager = {
         return
       }
       searchbarPlugins.addHeading('bangs', { text: l('bookmarksSimilarItems') })
-      suggestedResults.forEach(function (result, index) {
+      suggestedResults.forEach(function (result) {
         var item = searchbarUtils.createItem(getBookmarkListItemData(result, false))
         container.appendChild(item)
       })
@@ -193,9 +239,7 @@ const bookmarkManager = {
           .then(function (results) {
             results = results
               .filter(r => itemMatchesTags(r, parsedText.tags))
-              .sort(function (a, b) {
-                return b.lastVisit - a.lastVisit
-              })
+              .sort(bookmarkUtils.sortByTitle)
             if (results.length !== 0) {
               searchbar.openURL(results[0].url, null)
             }

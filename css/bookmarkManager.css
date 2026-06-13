@@ -101,3 +101,86 @@
 .dark-theme .tag-edit-area .tag-input::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.66);
 }
+
+/* bookmark dialog */
+.bookmark-dialog {
+  max-width: 420px;
+}
+
+.bookmark-dialog-field {
+  display: block;
+  margin-bottom: 0.85em;
+}
+
+.bookmark-dialog-field span {
+  display: block;
+  font-size: 0.85em;
+  opacity: 0.75;
+  margin-bottom: 0.35em;
+}
+
+.bookmark-dialog-field input,
+.bookmark-dialog-field select {
+  width: 100%;
+  padding: 0.5em 0.65em;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.dark-theme .bookmark-dialog-field input,
+.dark-theme .bookmark-dialog-field select {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.bookmark-dialog-url {
+  font-size: 0.85em;
+  opacity: 0.6;
+  margin-bottom: 1em;
+  word-break: break-all;
+}
+
+.bookmark-dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.bookmark-dialog-save {
+  margin-left: auto;
+  padding: 0.45em 1.25em;
+  border-radius: 4px;
+  border: none;
+  background: #1a73e8;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.95em;
+}
+
+.bookmark-dialog-save:hover {
+  background: #1765cc;
+}
+
+.bookmark-dialog-remove {
+  padding: 0.45em 0.75em;
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.75;
+  cursor: pointer;
+  font-size: 0.95em;
+}
+
+.bookmark-dialog-remove:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
+}
+
+.dark-theme .bookmark-dialog-remove:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
