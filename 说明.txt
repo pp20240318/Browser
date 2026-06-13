@@ -1,0 +1,54 @@
+Min 浏览器 - 常用命令
+
+环境要求：Node.js（建议 LTS 版本）
+
+一、首次安装
+  npm install
+
+二、开发运行
+  npm run start
+  （编译 + 监听文件变化 + 启动 Electron 开发模式）
+
+  修改代码后，在浏览器内按 Alt+Ctrl+R 刷新界面。
+
+  仅启动 Electron（需先 build）：
+  npm run startElectron
+
+三、编译 / 生成
+  npm run build              编译全部（main / browser / styles / preload）
+
+  分项编译：
+  npm run buildMain
+  npm run buildBrowser
+  npm run buildBrowserStyles
+  npm run buildPreload
+
+  监听文件自动编译：
+  npm run watch
+
+四、发布 / 打包安装包
+  Windows：
+  npm run buildWindows
+
+  macOS：
+  npm run buildMacIntel      Intel 芯片
+  npm run buildMacArm        Apple 芯片
+
+  Linux：
+  npm run buildDebian        .deb 包
+  npm run buildRedhat        .rpm 包
+  npm run buildAppImage      AppImage
+
+  全平台（耗时较长）：
+  npm run buildAll
+
+  打包产物一般在 dist/ 目录。
+
+五、代码检查
+  npm test                   代码规范检查
+  npm run lint               格式化 + 自动修复
+
+六、更新内置数据（可选）
+  npm run updateFilters      更新广告过滤列表
+  npm run updateHttpsList    更新 HTTPS 升级列表
+  npm run updateSuffixes     更新公共后缀列表
